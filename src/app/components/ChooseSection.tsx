@@ -37,11 +37,6 @@ const questions = [
     question: "If I were a vibe:",
     placeholder: "Type your answer (e.g., Peaceful)",
   },
-  {
-    id: "color",
-    question: "If I were a color:",
-    placeholder: "Type your answer (e.g., Black)",
-  },
 ];
 
 export function ChooseSection({ onComplete }: ChooseSectionProps) {

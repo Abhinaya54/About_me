@@ -63,8 +63,10 @@ export default function App() {
   const handleChooseComplete = async (choices: Record<string, string>) => {
     setQuizData({ ...quizData, choices });
 
+    const picture = choices.picture_for_me?.trim() || "";
+
     try {
-      await upsertSubmission(participantName, { choices });
+      await upsertSubmission(participantName, { choices, picture });
     } catch (error) {
       console.error("Failed to save choices", error);
     }
@@ -150,6 +152,7 @@ export default function App() {
           participantName={participantName}
           score={calculateScore().score}
           totalQuestions={calculateScore().totalQuestions}
+          pictureUrl={quizData.choices.picture_for_me || ""}
           onSubmitMessage={handleMessageSubmit}
         />
       )}

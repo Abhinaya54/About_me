@@ -6,6 +6,7 @@ interface ResultSectionProps {
   participantName: string;
   score: number;
   totalQuestions: number;
+  pictureUrl: string;
   onSubmitMessage: (message: string) => Promise<void>;
 }
 
@@ -16,7 +17,7 @@ const getBadge = (percentage: number) => {
   return { title: "Cutie Friend ✨", emoji: "✨", color: "from-rose-500 to-pink-500" };
 };
 
-export function ResultSection({ participantName, score, totalQuestions, onSubmitMessage }: ResultSectionProps) {
+export function ResultSection({ participantName, score, totalQuestions, pictureUrl, onSubmitMessage }: ResultSectionProps) {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,16 +108,20 @@ export function ResultSection({ participantName, score, totalQuestions, onSubmit
             <h3 className={`text-4xl md:text-5xl mb-4 bg-gradient-to-r ${badge.color} bg-clip-text text-transparent`}>
               {badge.title}
             </h3>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-              <span className="text-3xl">
-                {percentage}%
-              </span>
-              <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-            </div>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              You got {score} out of {totalQuestions} correct!
-            </p>
+            {pictureUrl.trim() ? (
+              <div className="max-w-sm mx-auto mt-6">
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-3">Picture you shared 💖</p>
+                <img
+                  src={pictureUrl}
+                  alt="Shared by participant"
+                  className="w-full h-64 object-cover rounded-2xl border border-pink-200 dark:border-pink-700 shadow-lg"
+                />
+              </div>
+            ) : (
+              <p className="text-xl text-gray-600 dark:text-gray-300 mt-4">
+                No picture was shared.
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-8">

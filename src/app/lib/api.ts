@@ -3,6 +3,7 @@ export interface SubmissionPatch {
   choices?: Record<string, string>;
   memories?: Record<string, string>;
   loveHate?: { loves: string[]; hates: string[] };
+  picture?: string;
   message?: string;
 }
 
