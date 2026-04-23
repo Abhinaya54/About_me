@@ -34,6 +34,7 @@ app.get("/api/health", (_req, res) => {
 
 app.post("/api/submissions/upsert", async (req, res) => {
   try {
+    console.log("/api/submissions/upsert received body:", req.body);
     const { name, patch } = req.body || {};
 
     if (typeof name !== "string" || !name.trim()) {

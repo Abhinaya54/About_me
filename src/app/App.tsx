@@ -21,7 +21,9 @@ interface QuizData {
 
 export default function App() {
   const [currentSection, setCurrentSection] = useState<Section>("hero");
-  const [participantName, setParticipantName] = useState("");
+  const [participantName, setParticipantName] = useState(() => localStorage.getItem("participantName") || "");
+
+  const getParticipantName = () => participantName || localStorage.getItem("participantName") || "";
   const [quizData, setQuizData] = useState<QuizData>({
     guesses: {},
     choices: {},
@@ -38,6 +40,7 @@ export default function App() {
 
   const handleNameSubmit = async (name: string) => {
     setParticipantName(name);
+    localStorage.setItem("participantName", name);
 
     try {
       await upsertSubmission(name, {});
@@ -52,7 +55,7 @@ export default function App() {
     setQuizData({ ...quizData, guesses: answers });
 
     try {
-      await upsertSubmission(participantName, { guesses: answers });
+      await upsertSubmission(getParticipantName(), { guesses: answers });
     } catch (error) {
       console.error("Failed to save guess answers", error);
     }
@@ -66,7 +69,7 @@ export default function App() {
     const picture = choices.picture_for_me?.trim() || "";
 
     try {
-      await upsertSubmission(participantName, { choices, picture });
+      await upsertSubmission(getParticipantName(), { choices, picture });
     } catch (error) {
       console.error("Failed to save choices", error);
     }
@@ -78,7 +81,7 @@ export default function App() {
     setQuizData({ ...quizData, memories });
 
     try {
-      await upsertSubmission(participantName, { memories });
+      await upsertSubmission(getParticipantName(), { memories });
     } catch (error) {
       console.error("Failed to save memories", error);
     }
@@ -90,7 +93,7 @@ export default function App() {
     setQuizData({ ...quizData, loveHate: selections });
 
     try {
-      await upsertSubmission(participantName, { loveHate: selections });
+      await upsertSubmission(getParticipantName(), { loveHate: selections });
     } catch (error) {
       console.error("Failed to save love/hate", error);
     }
@@ -100,7 +103,7 @@ export default function App() {
 
   const handleMessageSubmit = async (message: string) => {
     try {
-      await upsertSubmission(participantName, { message });
+      await upsertSubmission(getParticipantName(), { message });
     } catch (error) {
       console.error("Failed to save final message", error);
       throw error;

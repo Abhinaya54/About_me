@@ -8,6 +8,11 @@ export interface SubmissionPatch {
 }
 
 export async function upsertSubmission(name: string, patch: SubmissionPatch): Promise<void> {
+  if (!name || typeof name !== "string" || !name.trim()) {
+    console.error("upsertSubmission called with empty name. Aborting request.", { patch });
+    throw new Error("Name is required to save submission.");
+  }
+
   const response = await fetch("/api/submissions/upsert", {
     method: "POST",
     headers: {
@@ -17,6 +22,15 @@ export async function upsertSubmission(name: string, patch: SubmissionPatch): Pr
   });
 
   if (!response.ok) {
-    throw new Error("Failed to save submission");
+    const text = await response.text().catch(() => "");
+    console.error("upsertSubmission failed", response.status, text);
+    throw new Error(`Failed to save submission: ${response.status} ${text}`);
+  }
+
+  try {
+    const json = await response.json().catch(() => null);
+    console.log("upsertSubmission succeeded", { name, patch, response: json });
+  } catch (e) {
+    // ignore
   }
 }
