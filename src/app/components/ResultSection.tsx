@@ -196,10 +196,10 @@ export function ResultSection({ participantName, score, totalQuestions, pictureU
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="text-center p-6 bg-green-100 dark:bg-green-900/30 rounded-2xl"
+              className="text-center p-8 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 rounded-2xl border-2 border-green-300 dark:border-green-700"
             >
-              <p className="text-2xl mb-2">Thank you! 💖</p>
-              <p className="text-gray-600 dark:text-gray-300">Your message means a lot!</p>
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">Thank you! ✨</p>
+              <p className="text-lg text-gray-700 dark:text-gray-200 leading-relaxed">Thank you for your response. Your data has been recorded successfully.</p>
             </motion.div>
           )}
         </motion.div>

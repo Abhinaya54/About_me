@@ -181,7 +181,7 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
           disabled={!canSubmit}
           className="w-full mt-8 py-4 bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white rounded-full text-xl shadow-lg hover:shadow-2xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
         >
-           🎉
+          End 🎉
         </motion.button>
       </div>
     </motion.div>
