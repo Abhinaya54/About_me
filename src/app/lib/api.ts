@@ -22,9 +22,15 @@ export async function upsertSubmission(name: string, patch: SubmissionPatch): Pr
   });
 
   if (!response.ok) {
-    const text = await response.text().catch(() => "");
-    console.error("upsertSubmission failed", response.status, text);
-    throw new Error(`Failed to save submission: ${response.status} ${text}`);
+    let details = "";
+    try {
+      const errJson = await response.json();
+      details = errJson.error || JSON.stringify(errJson);
+    } catch {
+      details = await response.text().catch(() => "");
+    }
+    console.error("upsertSubmission failed", response.status, details);
+    throw new Error(`Failed to save submission: ${response.status} ${details}`);
   }
 
   try {
