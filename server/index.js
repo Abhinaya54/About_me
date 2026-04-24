@@ -16,12 +16,22 @@ if (!mongoUri) {
   console.warn("   For development, the health endpoint will work but data endpoints will return errors.");
 }
 
-const client = new MongoClient(mongoUri);
-let collectionPromise;
+let client = null;
+let collectionPromise = null;
 
 async function getCollection() {
+  if (!mongoUri) {
+    throw new Error("MONGODB_URI environment variable is not set. Cannot connect to database.");
+  }
+
   if (!collectionPromise) {
-    collectionPromise = client.connect().then(() => client.db(dbName).collection(collectionName));
+    if (!client) {
+      client = new MongoClient(mongoUri);
+    }
+    collectionPromise = client.connect().then(() => {
+      console.log("✅ Connected to MongoDB");
+      return client.db(dbName).collection(collectionName);
+    });
   }
   return collectionPromise;
 }
@@ -36,6 +46,7 @@ app.get("/api/health", (_req, res) => {
 app.post("/api/submissions/upsert", async (req, res) => {
   try {
     if (!mongoUri) {
+      console.error("❌ Database not configured. MONGODB_URI is missing.");
       return res.status(503).json({ error: "Database not configured. Set MONGODB_URI environment variable." });
     }
 
@@ -43,10 +54,12 @@ app.post("/api/submissions/upsert", async (req, res) => {
     const { name, patch } = req.body || {};
 
     if (typeof name !== "string" || !name.trim()) {
+      console.warn("❌ Name is required");
       return res.status(400).json({ error: "Name is required." });
     }
 
     if (!patch || typeof patch !== "object" || Array.isArray(patch)) {
+      console.warn("❌ Patch object is required");
       return res.status(400).json({ error: "Patch object is required." });
     }
 
@@ -54,8 +67,9 @@ app.post("/api/submissions/upsert", async (req, res) => {
     const normalizedName = trimmedName.toLowerCase();
     const now = new Date();
 
+    console.log(`📝 Upserting document: ${trimmedName}`);
     const collection = await getCollection();
-    await collection.updateOne(
+    const result = await collection.updateOne(
       { normalizedName },
       {
         $set: {
@@ -71,10 +85,11 @@ app.post("/api/submissions/upsert", async (req, res) => {
       { upsert: true }
     );
 
-    return res.json({ success: true });
+    console.log(`✅ Upsert successful:`, { matchedCount: result.matchedCount, upsertedId: result.upsertedId, modifiedCount: result.modifiedCount });
+    return res.json({ success: true, upsertedId: result.upsertedId, matchedCount: result.matchedCount });
   } catch (error) {
-    console.error("Failed to upsert submission", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("❌ Failed to upsert submission", error.message, error.stack);
+    return res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 
