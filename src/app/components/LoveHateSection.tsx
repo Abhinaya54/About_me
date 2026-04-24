@@ -74,11 +74,11 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
     const finalHates = hates.filter((item) => item !== OTHER_OPTION);
 
     if (isOtherLoveSelected && otherLove.trim()) {
-      finalLoves.push(`Other: ${otherLove.trim()}`);
+      finalLoves.push(otherLove.trim());
     }
 
     if (isOtherHateSelected && otherHate.trim()) {
-      finalHates.push(`Other: ${otherHate.trim()}`);
+      finalHates.push(otherHate.trim());
     }
 
     onComplete({ loves: finalLoves, hates: finalHates });
