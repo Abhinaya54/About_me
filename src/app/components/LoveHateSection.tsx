@@ -6,80 +6,19 @@ interface LoveHateSectionProps {
   onComplete: (selections: { loves: string[]; hates: string[] }) => Promise<void> | void;
 }
 
-const OTHER_OPTION = "✍️ Other";
-
-const loveOptions = [
-  "💯 Honesty",
-  "🤝 Loyalty",
-  "🍕 Food",
-  "☮️ Peace",
-  "😄 Funny people",
-  OTHER_OPTION,
-];
-
-const hateOptions = [
-  "🎭 Fake people",
-  "🤥 Lies",
-  "⛈️ Negativity",
-  "🎪 Drama",
-  "⏰ Waiting",
-  OTHER_OPTION,
-];
-
 export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
-  const [loves, setLoves] = useState<string[]>([]);
-  const [hates, setHates] = useState<string[]>([]);
-  const [otherLove, setOtherLove] = useState("");
-  const [otherHate, setOtherHate] = useState("");
+  const [loves, setLoves] = useState<string[]>(["", "", "", "", "", ""]);
+  const [hates, setHates] = useState<string[]>(["", "", "", "", "", ""]);
 
-  const toggleLove = (option: string) => {
-    setLoves(prev =>
-      prev.includes(option)
-        ? prev.filter(item => item !== option)
-        : [...prev, option]
-    );
-
-    if (option === OTHER_OPTION && loves.includes(OTHER_OPTION)) {
-      setOtherLove("");
-    }
-  };
-
-  const toggleHate = (option: string) => {
-    setHates(prev =>
-      prev.includes(option)
-        ? prev.filter(item => item !== option)
-        : [...prev, option]
-    );
-
-    if (option === OTHER_OPTION && hates.includes(OTHER_OPTION)) {
-      setOtherHate("");
-    }
-  };
-
-  const isOtherLoveSelected = loves.includes(OTHER_OPTION);
-  const isOtherHateSelected = hates.includes(OTHER_OPTION);
-
-  const canSubmit =
-    loves.length > 0 &&
-    hates.length > 0 &&
-    (!isOtherLoveSelected || otherLove.trim().length > 0) &&
-    (!isOtherHateSelected || otherHate.trim().length > 0);
+  const canSubmit = loves.some((item) => item.trim().length > 0) && hates.some((item) => item.trim().length > 0);
 
   const handleSubmit = () => {
     if (!canSubmit) {
       return;
     }
 
-    const finalLoves = loves.filter((item) => item !== OTHER_OPTION);
-    const finalHates = hates.filter((item) => item !== OTHER_OPTION);
-
-    if (isOtherLoveSelected && otherLove.trim()) {
-      finalLoves.push(otherLove.trim());
-    }
-
-    if (isOtherHateSelected && otherHate.trim()) {
-      finalHates.push(otherHate.trim());
-    }
+    const finalLoves = loves.filter((item) => item.trim().length > 0);
+    const finalHates = hates.filter((item) => item.trim().length > 0);
 
     onComplete({ loves: finalLoves, hates: finalHates });
   };
@@ -96,7 +35,7 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
           <h2 className="text-4xl md:text-5xl mb-4 bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
             Love / Hate Quiz ❤️💔
           </h2>
-          <p className="text-gray-600 dark:text-gray-300">Guess what I love and hate!</p>
+          <p className="text-gray-600 dark:text-gray-300">Tell me what you love and hate!</p>
         </div>
 
         <div className="space-y-12">
@@ -106,34 +45,24 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
             className="backdrop-blur-lg bg-white/60 dark:bg-gray-800/60 rounded-3xl p-8 border border-white/20 shadow-xl"
           >
             <h3 className="text-2xl mb-6 text-center text-red-600 dark:text-red-400">
-              What I LOVE ❤️
+              What I LOVE ❤️ (up to 6 items)
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {loveOptions.map((option) => (
-                <motion.button
-                  key={option}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => toggleLove(option)}
-                  className={`p-4 rounded-2xl transition-all ${
-                    loves.includes(option)
-                      ? "bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg"
-                      : "bg-white/80 dark:bg-gray-700/80 hover:bg-red-100 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  {option}
-                </motion.button>
+            <div className="space-y-4">
+              {loves.map((love, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={love}
+                  onChange={(e) => {
+                    const newLoves = [...loves];
+                    newLoves[index] = e.target.value;
+                    setLoves(newLoves);
+                  }}
+                  placeholder={`Love #${index + 1} (e.g., Honesty, Loyalty...)`}
+                  className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-red-200 dark:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                />
               ))}
             </div>
-            {isOtherLoveSelected && (
-              <textarea
-                value={otherLove}
-                onChange={(event) => setOtherLove(event.target.value)}
-                placeholder="Write what else I love..."
-                rows={3}
-                className="w-full mt-4 px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-red-200 dark:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all resize-none"
-              />
-            )}
           </motion.div>
 
           <motion.div
@@ -143,34 +72,24 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
             className="backdrop-blur-lg bg-white/60 dark:bg-gray-800/60 rounded-3xl p-8 border border-white/20 shadow-xl"
           >
             <h3 className="text-2xl mb-6 text-center text-purple-600 dark:text-purple-400">
-              What I HATE 💔
+              What I HATE 💔 (up to 6 items)
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {hateOptions.map((option) => (
-                <motion.button
-                  key={option}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => toggleHate(option)}
-                  className={`p-4 rounded-2xl transition-all ${
-                    hates.includes(option)
-                      ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg"
-                      : "bg-white/80 dark:bg-gray-700/80 hover:bg-purple-100 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  {option}
-                </motion.button>
+            <div className="space-y-4">
+              {hates.map((hate, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={hate}
+                  onChange={(e) => {
+                    const newHates = [...hates];
+                    newHates[index] = e.target.value;
+                    setHates(newHates);
+                  }}
+                  placeholder={`Hate #${index + 1} (e.g., Lies, Drama...)`}
+                  className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                />
               ))}
             </div>
-            {isOtherHateSelected && (
-              <textarea
-                value={otherHate}
-                onChange={(event) => setOtherHate(event.target.value)}
-                placeholder="Write what else I hate..."
-                rows={3}
-                className="w-full mt-4 px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none"
-              />
-            )}
           </motion.div>
         </div>
 
