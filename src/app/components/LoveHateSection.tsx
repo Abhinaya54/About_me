@@ -7,18 +7,24 @@ interface LoveHateSectionProps {
 }
 
 export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
-  const [loves, setLoves] = useState<string[]>(["", "", "", "", "", ""]);
-  const [hates, setHates] = useState<string[]>(["", "", "", "", "", ""]);
+  const [loves, setLoves] = useState<string>("");
+  const [hates, setHates] = useState<string>("");
 
-  const canSubmit = loves.some((item) => item.trim().length > 0) && hates.some((item) => item.trim().length > 0);
+  const canSubmit = loves.trim().length > 0 && hates.trim().length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit) {
       return;
     }
 
-    const finalLoves = loves.filter((item) => item.trim().length > 0);
-    const finalHates = hates.filter((item) => item.trim().length > 0);
+    const finalLoves = loves
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+    const finalHates = hates
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
 
     onComplete({ loves: finalLoves, hates: finalHates });
   };
@@ -45,24 +51,15 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
             className="backdrop-blur-lg bg-white/60 dark:bg-gray-800/60 rounded-3xl p-8 border border-white/20 shadow-xl"
           >
             <h3 className="text-2xl mb-6 text-center text-red-600 dark:text-red-400">
-              What I LOVE ❤️ (up to 6 items)
+              What I LOVE ❤️
             </h3>
-            <div className="space-y-4">
-              {loves.map((love, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  value={love}
-                  onChange={(e) => {
-                    const newLoves = [...loves];
-                    newLoves[index] = e.target.value;
-                    setLoves(newLoves);
-                  }}
-                  placeholder={`Love #${index + 1} (e.g., Honesty, Loyalty...)`}
-                  className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-red-200 dark:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
-                />
-              ))}
-            </div>
+            <textarea
+              value={loves}
+              onChange={(e) => setLoves(e.target.value)}
+              placeholder="Type what you love (separate items with commas, e.g., Honesty, Loyalty, Food)"
+              rows={4}
+              className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-red-200 dark:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all resize-none"
+            />
           </motion.div>
 
           <motion.div
@@ -72,24 +69,15 @@ export function LoveHateSection({ onComplete }: LoveHateSectionProps) {
             className="backdrop-blur-lg bg-white/60 dark:bg-gray-800/60 rounded-3xl p-8 border border-white/20 shadow-xl"
           >
             <h3 className="text-2xl mb-6 text-center text-purple-600 dark:text-purple-400">
-              What I HATE 💔 (up to 6 items)
+              What I HATE 💔
             </h3>
-            <div className="space-y-4">
-              {hates.map((hate, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  value={hate}
-                  onChange={(e) => {
-                    const newHates = [...hates];
-                    newHates[index] = e.target.value;
-                    setHates(newHates);
-                  }}
-                  placeholder={`Hate #${index + 1} (e.g., Lies, Drama...)`}
-                  className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-                />
-              ))}
-            </div>
+            <textarea
+              value={hates}
+              onChange={(e) => setHates(e.target.value)}
+              placeholder="Type what you hate (separate items with commas, e.g., Lies, Drama, Negativity)"
+              rows={4}
+              className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-700/80 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none"
+            />
           </motion.div>
         </div>
 
