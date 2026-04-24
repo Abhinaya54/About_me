@@ -157,6 +157,7 @@ export default function App() {
           totalQuestions={calculateScore().totalQuestions}
           pictureUrl={quizData.choices.picture_for_me || ""}
           onSubmitMessage={handleMessageSubmit}
+          loveHate={quizData.loveHate}
         />
       )}
     </div>

@@ -6,9 +6,10 @@ interface ResultSectionProps {
   totalQuestions: number;
   pictureUrl: string;
   onSubmitMessage: (message: string) => Promise<void>;
+  loveHate?: { loves: string[]; hates: string[] };
 }
 
-export function ResultSection({ participantName }: ResultSectionProps) {
+export function ResultSection({ participantName, loveHate }: ResultSectionProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -65,9 +66,49 @@ export function ResultSection({ participantName }: ResultSectionProps) {
             <p className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-6">
               Thank You! 💖
             </p>
-            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 leading-relaxed">
-              Thank you for your response, {participantName}. Your data has been recorded successfully.
+            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 leading-relaxed mb-8">
+              Thank you for your response, {participantName}.
             </p>
+
+            {loveHate && (
+              <div className="space-y-6 mt-8">
+                {loveHate.loves && loveHate.loves.length > 0 && (
+                  <div className="text-left">
+                    <p className="text-lg font-semibold text-red-600 dark:text-red-400 mb-3">
+                      What You Love ❤️:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {loveHate.loves.map((item, index) => (
+                        <span
+                          key={index}
+                          className="inline-block px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-full text-sm"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {loveHate.hates && loveHate.hates.length > 0 && (
+                  <div className="text-left">
+                    <p className="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-3">
+                      What You Hate 💔:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {loveHate.hates.map((item, index) => (
+                        <span
+                          key={index}
+                          className="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       </div>
