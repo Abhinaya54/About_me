@@ -5,13 +5,17 @@ const dbName = process.env.MONGODB_DB_NAME || 'about_me';
 const collectionName = process.env.MONGODB_COLLECTION || 'submissions';
 
 if (!mongoUri) {
-  throw new Error('MONGODB_URI is required. Add it to your Vercel Environment Variables.');
+  console.warn('⚠️  MONGODB_URI is not set. Database operations will fail.');
 }
 
 let cachedClient = null;
 let cachedDb = null;
 
 export async function getCollection() {
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI environment variable is not set');
+  }
+
   if (cachedDb) {
     return cachedDb.collection(collectionName);
   }

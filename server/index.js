@@ -12,7 +12,8 @@ const dbName = process.env.MONGODB_DB_NAME || "about_me";
 const collectionName = process.env.MONGODB_COLLECTION || "submissions";
 
 if (!mongoUri) {
-  throw new Error("MONGODB_URI is required. Add it to your .env file.");
+  console.warn("⚠️  MONGODB_URI is not set. Add it to your .env file for production.");
+  console.warn("   For development, the health endpoint will work but data endpoints will return errors.");
 }
 
 const client = new MongoClient(mongoUri);
@@ -34,6 +35,10 @@ app.get("/api/health", (_req, res) => {
 
 app.post("/api/submissions/upsert", async (req, res) => {
   try {
+    if (!mongoUri) {
+      return res.status(503).json({ error: "Database not configured. Set MONGODB_URI environment variable." });
+    }
+
     console.log("/api/submissions/upsert received body:", req.body);
     const { name, patch } = req.body || {};
 

@@ -50,7 +50,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Failed to upsert submission', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    const statusCode = error.message?.includes('MONGODB_URI') ? 503 : 500;
+    return res.status(statusCode).json({ error: error.message || 'Internal server error' });
   }
 }
 
